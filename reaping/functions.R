@@ -1,0 +1,34 @@
+# Common Functions used by the reaping scripts
+# place an order
+# returns json text if successful
+
+library(httr)
+
+usgs_place_order <- function(scene_ids){
+  
+ # build the object
+  usgs_order_ob <- list(
+    `olitirs8` = list(
+      `inputs` = scene_ids,
+      `products` = c("sr", "sr_ndvi", "sr_evi", "cloud")
+    ),
+    `format` = "gtiff", 
+    `plot_statistics` = TRUE, 
+    `projection` = list(`lonlat` = NULL),
+    `note` = "From R Script usgs_place_order"
+  )
+
+  payload = toJSON(usgs_order_ob, pretty = TRUE, auto_unbox = TRUE, null = 'null')
+  
+  response <- POST(paste(USGS_API_URL, 'order', sep = ""),
+                   body = payload,
+                   authenticate(USGS_USER, USGS_PASSWORD) )
+  warn_for_status(response)
+  if(response$status_code == 200){
+    # response_json <- content(repsonse, "parsed", "application/json")
+    return(content(response, "text"))
+  }else{
+    return(NULL)
+  }
+  
+}
