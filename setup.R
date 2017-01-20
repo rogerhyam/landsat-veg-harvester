@@ -5,4 +5,5 @@
 # install packages
 install.packages('sqldf')
 install.packages('httr')
+install.packages('jsonlite')
 

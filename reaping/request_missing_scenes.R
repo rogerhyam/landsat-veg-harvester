@@ -1,6 +1,5 @@
 
 # Takes a list of the available scenes. Compares them to the files we have downloaded. Puts in a request for the missing ones.
-library(tools)
 
 source('config.R')
 source('reaping/functions.R')
