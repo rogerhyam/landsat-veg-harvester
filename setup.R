@@ -2,8 +2,11 @@
 
 # may be best to start an interactive session as root to install packages on Ubuntu
 
+# sudo apt-get install libgdal1-dev libproj-dev gdal-bin
+
 # install packages
 install.packages('sqldf')
 install.packages('httr')
 install.packages('jsonlite')
-
+install.packages('raster')
+install.package('rgdal')
