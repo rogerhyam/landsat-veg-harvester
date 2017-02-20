@@ -11,7 +11,7 @@ meta_file.csv <- paste(raw_dir, "/landsat8_metadata.csv" , sep="")
 available_scenes.RData <- paste(raw_dir, "/available_scenes.RData", sep="")
 
 # get the bulk data
-# download.file(USGS_METADATA_URL, meta_file.gz, mode = "w")
+download.file(USGS_METADATA_URL, meta_file.gz, mode = "w")
 
 # unzip it
 system(paste("gunzip -k ", meta_file.gz))

@@ -16,13 +16,22 @@ downloaded_scene_file_names <- list.files(list.dirs(raw_dir, recursive = FALSE),
 # chop the ending off each one because we are not intereseted in the status
 downloaded_scene_ids <- file_path_sans_ext(downloaded_scene_file_names)
 
-# work out the missing ones - just the first 10 in this batch
-missing_scenes <- head(setdiff(available_scenes[,'sceneID'], downloaded_scene_ids), 10)
+# work out the missing ones - we can only do them one at a time because we may get an error
+missing_scenes <- head(setdiff(available_scenes[,'sceneID'], downloaded_scene_ids), 1)
 
 # place orders for the scene
-order_json <- usgs_place_order(missing_scenes)
+response <- usgs_place_order(missing_scenes)
 
-# if we are successful with the call then write a file for each scene to say it has been ordered
+# file ending depends on response kind
+if(response$status_code == 200){
+  ending <- ".order"
+}else{
+  ending <- paste(".", response$status_code, sep="")
+}
+
+order_json <-   content(response, "text")
+
+#  write a file for each scene to say it has been ordered or failed with the response code
 if(!is.null(order_json)){
   
   # work through and order each of these scenes 
@@ -33,8 +42,9 @@ if(!is.null(order_json)){
     path = as.integer(substr(scene_id, 4, 6))
     
     # write the json to that 
-    writeLines(order_json, paste(raw_dir, '/', path, '_', row, '/', scene_id, '.order', sep=""))
+    writeLines(order_json, paste(raw_dir, '/', path, '_', row, '/', scene_id, ending, sep=""))
 
+    
   }
   
 }

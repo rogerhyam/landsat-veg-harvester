@@ -14,7 +14,8 @@ library(httr)
 source('../secure_config.R')
 
 # root directory of where the data is stored (no slash at end)
-DATA_DIR <- "/media/landsat-data/data"
+DATA_DIR <- "/media/repo_disk/landsat-data"
+#DATA_DIR <- "/media/landsat-data/data"
 #DATA_DIR <- "/Volumes/landsat-data"
 
 # download location for bulk metadata at USGS

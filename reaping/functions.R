@@ -7,7 +7,7 @@ usgs_place_order <- function(scene_ids){
  # build the object
   usgs_order_ob <- list(
     `olitirs8` = list(
-      `inputs` = scene_ids,
+      `inputs` = list(scene_ids),
       `products` = c("sr", "sr_ndvi", "sr_evi", "cloud")
     ),
     `format` = "gtiff", 
@@ -22,12 +22,7 @@ usgs_place_order <- function(scene_ids){
                    body = payload,
                    authenticate(USGS_USER, USGS_PASSWORD) )
   warn_for_status(response)
-  if(response$status_code == 200){
-    # response_json <- content(repsonse, "parsed", "application/json")
-    return(content(response, "text"))
-  }else{
-    return(NULL)
-  }
+  return(response);
   
 }
 
