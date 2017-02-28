@@ -22,57 +22,48 @@ order_ids <- unique(unlist(order_ids))
 # call to get the status for the scenes in these orders.
 for(id in order_ids){
   
-  # work through each item and update the 
-  order_statuses <- usgs_get_status(id)
-  if(!is.null(order_statuses)){
-    by(order_statuses, 1:nrow(order_statuses), function(item){
-      
-      # we ignore plot - don't ask for that any more
-      if(item$name == "plot") return()
-      
-      # calculate location of file (by path_row) e.g. LC82040212016340LGN00
-      row = as.integer(substr(item$name, 7, 9))
-      path = as.integer(substr(item$name, 4, 6))
-      file_without_ending = paste(raw_dir, '/', path, '_', row, '/', item$name, sep="")
-      
-      # if the order is unavailable replace the .order file with a .unavailable file
-      if(item$status == "unavailable"){
-        
-        # write the note to an unavailable file 
-        writeLines(item$note[[1]], paste(file_without_ending, '.unavailable', sep=""))
-        
-        # remove the order file so we don't keep checking it
-        file.remove(paste(file_without_ending, '.order', sep=""))
-        
-      }
-      
-      # if the status is complete download the files and delete the associated .order file
-      if(item$status == "complete"){
-        print(item$cksum_download_url[[1]])
-        
-        # get the md5 checksum
-        md5_file <- paste(file_without_ending, '.md5', sep='')
-        download.file(item$cksum_download_url[[1]], md5_file)
-        
-        # get the actual thing
-        tar_file <- paste(file_without_ending, '.tar.gz', sep='')
-        download.file(item$product_dload_url[[1]], tar_file)
-        
-        # improve me - not going to check md5 at the moment as we are getting working files but bad md5s
-        
-        # remove the .order file so we don't download it next time
-        file.remove(paste(file_without_ending, '.order', sep=""))
-        
-      }
-      
-      # if they are still pending leave the file there
-      
-    })
-  }else{
-    warning(paste("No results for order id:", id))
-  }
- 
+  # only item per order
+  item <- usgs_get_status(id)
+     
+  # we ignore plot - don't ask for that any more
+  if(item$name == "plot") return()
   
-}
+  # calculate location of file (by path_row) e.g. LC82040212016340LGN00
+  row = as.integer(substr(item$name, 7, 9))
+  path = as.integer(substr(item$name, 4, 6))
+  file_without_ending = paste(raw_dir, '/', path, '_', row, '/', item$name, sep="")
+  
+  # if the order is unavailable replace the .order file with a .unavailable file
+  if(item$status == "unavailable"){
+    
+    # write the note to an unavailable file 
+    writeLines(item$note[[1]], paste(file_without_ending, '.unavailable', sep=""))
+    
+    # remove the order file so we don't keep checking it
+    file.remove(paste(file_without_ending, '.order', sep=""))
+    
+  }
+  
+  # if the status is complete download the files and delete the associated .order file
+  if(item$status == "complete"){
+    print(item$cksum_download_url[[1]])
+    
+    # get the md5 checksum
+    md5_file <- paste(file_without_ending, '.md5', sep='')
+    download.file(item$cksum_download_url[[1]], md5_file)
+    
+    # get the actual thing
+    tar_file <- paste(file_without_ending, '.tar.gz', sep='')
+    download.file(item$product_dload_url[[1]], tar_file)
+    
+    # improve me - not going to check md5 at the moment as we are getting working files but bad md5s
+    
+    # remove the .order file so we don't download it next time
+    file.remove(paste(file_without_ending, '.order', sep=""))
+    
+  }
+  
+  
+} # end working through orders
 
 
