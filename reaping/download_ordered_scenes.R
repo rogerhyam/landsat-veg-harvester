@@ -50,19 +50,35 @@ for(id in order_ids){
     
     # get the md5 checksum
     md5_file <- paste(file_without_ending, '.md5', sep='')
-    download.file(item$cksum_download_url[[1]], md5_file)
+    
+    # Don't bother with full error handling on the md5 download as we aren't checking it just now
+    try(download.file(item$cksum_download_url[[1]], md5_file))
     
     # get the actual thing
     tar_file <- paste(file_without_ending, '.tar.gz', sep='')
-    download.file(item$product_dload_url[[1]], tar_file)
     
+    success_code <- tryCatch(
+      download.file(item$product_dload_url[[1]], tar_file),
+      error = function(e){
+        writeLines(conditionMessage(e), paste(file_without_ending, '.error', sep=""))
+        return(99)
+      },
+      warning = function(e){
+        writeLines(conditionMessage(e), paste(file_without_ending, '.warning', sep=""))
+        return(99)
+      }
+    )
+
     # improve me - not going to check md5 at the moment as we are getting working files but bad md5s
     
-    # remove the .order file so we don't download it next time
-    file.remove(paste(file_without_ending, '.order', sep=""))
+    # remove the .order and other files so we don't download it next time
+    if(success_code == 0){
+      file.remove(paste(file_without_ending, '.order', sep=""))
+      file.remove(paste(file_without_ending, '.error', sep=""), showWarnings = FALSE)
+      file.remove(paste(file_without_ending, '.warning', sep=""), showWarnings = FALSE)
+    }
     
   }
-  
   
 } # end working through orders
 
