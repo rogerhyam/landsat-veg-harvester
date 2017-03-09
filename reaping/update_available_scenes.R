@@ -19,7 +19,7 @@ system(paste("gunzip -k ", meta_file.gz))
 # load only the rows for the scenes we are interested in
 # we use an sql filter on the csv file loader based on the directory names
 path_row <- paste(list.dirs(raw_dir, full.name = FALSE), collapse = '","')
-sql <- paste("SELECT  * FROM file WHERE `path` || '_' ||`row`  in", '("' , path_row, '")' )
+sql <- paste("SELECT  * FROM file WHERE `path` || '_' ||`row`  in ", '("' , path_row, '")', sep = "" )
 available_scenes <- read.csv.sql(meta_file.csv, sql = sql, header = TRUE)
 
 # save a copy of this as the list of all the available scenes for the row/path specified.

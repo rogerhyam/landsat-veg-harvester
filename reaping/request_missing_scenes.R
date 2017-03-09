@@ -19,6 +19,11 @@ downloaded_scene_ids <- file_path_sans_ext(downloaded_scene_file_names)
 # work out the missing ones - we can only do them one at a time because we may get an error
 missing_scenes <- head(setdiff(available_scenes[,'sceneID'], downloaded_scene_ids), 1)
 
+if(length(missing_scenes) == 0){
+  print("No scenes to order")
+  q() 
+}
+
 # place orders for the scene
 response <- usgs_place_order(missing_scenes)
 
