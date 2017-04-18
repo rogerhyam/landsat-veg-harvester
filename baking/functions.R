@@ -1,6 +1,26 @@
 
 # common functions used in baking products from the threshed grains
 
+# gets a bounding box extent of size in metres around a longlat coordinate.
+roi_get_buffer <- function(coord, buffer){
+  # coords <- cbind(-3.2011581,55.966792)
+  
+  # Latitude: 1 deg = 110.574 km
+  lat_buffer_degrees = (buffer/1000)/110.574
+  lon_buffer_degrees = (buffer/1000) / 111.320*cos( coord[[2]]*(pi/180) ) # cos is radians
+  
+  minX <- coord[1] - lat_buffer_degrees
+  maxX <- coord[1] + lat_buffer_degrees
+  minY <- coord[2] - lon_buffer_degrees
+  maxY <- coord[2] + lon_buffer_degrees
+  
+  e <- extent(minX, maxX, minY, maxY)
+  
+  print(e)
+  
+  return(e)
+  
+}
 
 # adds layers to the roi stack from the available threshed rasters
 # - skips non intersecting rasters
