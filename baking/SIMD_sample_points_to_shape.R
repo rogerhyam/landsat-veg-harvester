@@ -14,6 +14,7 @@ sample_point_csv <- paste(DATA_DIR, "/simd/SIMD_2016_sample_points.csv", sep="")
 dir.create(paste(DATA_DIR, "/simd/SIMD_2016_sample_points", sep=""), showWarnings = FALSE)
 sample_point_shp <- paste(DATA_DIR, "/simd/SIMD_2016_sample_points/SIMD_2016_sample_points.shp", sep="") 
 sample_points <- read.csv(sample_point_csv)
+rownames(sample_points) <- sample_points$DataZone
 
 polys <- NULL
 
@@ -36,18 +37,21 @@ for(i in 1:nrow(sample_points)) {
   crs(poly) <- crs_longlat
   
   # give it a name so it doesn't clash
-  poly@polygons[[1]]@ID <- paste(row$DataZone, "-", row$PostCode, sep = "")
+  poly@polygons[[1]]@ID <- as.character(row$DataZone)
   
   if(is.null(polys)){
     print("Poly is null")
     polys <- poly
+    poly_data <- data
   }else{
     print("Poly is not null")
     polys <- rbind(polys, poly);
   }
   
-  if(i > 3) break
+  # if(i > 3) break
   
 }
 
-shapefile(polys, sample_point_shp, overwrite=TRUE)
+polys_df <- SpatialPolygonsDataFrame(polys, sample_points )
+
+shapefile(polys_df, sample_point_shp, overwrite=TRUE)
