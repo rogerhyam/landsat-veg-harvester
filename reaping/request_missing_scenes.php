@@ -11,7 +11,9 @@
          WHERE
     	 concat(`ls`.`path` , '_', `ls`.`row`)  in ($in_path_rows)
     	 AND d.`status` is NULL
-    	 AND ls.dayOrNight = 'DAY'";
+    	 AND ls.dayOrNight = 'DAY'
+    	 AND CLOUD_COVER_LAND < 90
+         ORDER BY CLOUD_COVER_LAND * 1 ASC";
     	 
     $result = $mysqli->query($sql);
     

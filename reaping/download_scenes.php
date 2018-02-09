@@ -31,8 +31,16 @@
        if($item->status == 'complete'){
            
            echo "\tDownloading $item->name ... "; 
-           $worked = file_put_contents($data_directory . '/raw/tars/'. $item->name . '.tar.gz', fopen($item->product_dload_url, 'r'));
+           //$worked = file_put_contents($data_directory . '/raw/tars/'. $item->name . '.tar.gz', fopen($item->product_dload_url, 'r'));
            //$worked = true;
+           
+           $ch = curl_init();
+           curl_setopt($ch, CURLOPT_URL, $item->product_dload_url);
+           $fp = fopen($data_directory . '/raw/tars/'. $item->name . '.tar.gz', 'w+');
+           curl_setopt($ch, CURLOPT_FILE, $fp);
+           $worked = curl_exec ($ch);
+           curl_close ($ch);
+           fclose($fp);
            
            // we leave the table if it failed so we can try again.
            if($worked){
