@@ -6,6 +6,8 @@ library(utils)
 library(jsonlite)
 library(httr)
 library(maptools)
+library(raster)
+library(rgeos)
 
 source('../secure_config.R')
 
