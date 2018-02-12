@@ -40,7 +40,10 @@ for(row in 1:nrow(postcodes)){
     plot(x[['cropped']])
     x[['postcode']] <- postcodes[row, "postcode"]
     x[['product_id']] <- product_id
-    break
+    x[['year']] <- 1965 #product[[year]]
+    x[['month']] <- 2 #product[[month]]
+    x[['day']] <- 28 #product[[day]]
+    save_sample(sample = x)
   }  
   
 }

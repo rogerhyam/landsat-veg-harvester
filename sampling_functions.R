@@ -42,7 +42,14 @@ get_stats_for_sample <- function(width_m, postcode_point, ndvi_raster){
   
   buffer_osg <- gBuffer( postcode_point, width=width_m, byid=TRUE)
   buffer_wgs84 <- spTransform(buffer_osg, LATLON_CRS)
-  cropped <- crop(ndvi_raster, buffer_wgs84)
+  
+  # if we get one out of the extent - should this happen? 
+  if( is.null(intersect(extent(ndvi_raster), extent(buffer_wgs84) ) ) ){
+    results[['pixels_not_na']] <- 0;
+    return(results);
+  }
+  
+  cropped <- crop(ndvi_raster, buffer_wgs84) # FIXME - catch edge case of buffer overlapping raster edge
   results[['cropped']] <- cropped
   
   # we want to do our stats on the area just in the mask 
@@ -64,9 +71,10 @@ get_stats_for_sample <- function(width_m, postcode_point, ndvi_raster){
   # no data give up now
   if(results[['pixels_not_na']] == 0) return(results)
   
-  results[['pixels_coverage']] <- results[['pixels_not_na']] / results[['pixels_total']]
+  results[['pixel_coverage']] <- results[['pixels_not_na']] / results[['pixels_total']]
   results[['ndvi_max']] <- max(vals, na.rm = TRUE) / 10000
   results[['ndvi_min']] <- min(vals, na.rm = TRUE) / 10000
+  results[['ndvi_average']] <- mean(vals, na.rm = TRUE) / 10000
   results[['ndvi_sd']] <- sd(vals, na.rm = TRUE) / 10000
   
   return(results)
@@ -97,5 +105,51 @@ get_postcodes_in_extent <- function(target_raster){
   dbClearResult(res)
   
   return(all_points)
+  
+}
+
+save_sample <- function(sample){
+  print(sample)
+
+  sql <- sprintf("INSERT INTO samples
+                ( postcode, product_id, buffer_size, year, month, day, pixels_total, pixels_not_na, pixel_coverage, ndvi_max, ndvi_min, ndvi_average, ndvi_sd, created) VALUE ('%s', '%s', %i, %i, %i, %i, %i, %i, %f, %f, %f, %f, %f, now() )",
+                 sample[['postcode']],
+                 sample[['product_id']],
+                 sample[['buffer_width']],
+                 sample[['year']],
+                 sample[['month']],
+                 sample[['day']],
+                 sample[['pixels_total']],
+                 sample[['pixels_not_na']],
+                 sample[['pixel_coverage']],
+                 sample[['ndvi_max']],
+                 sample[['ndvi_min']],
+                 sample[['ndvi_average']],
+                 sample[['ndvi_sd']]
+                )
+                 
+  # sql <- sprintf("INSERT INTO samples
+  #               ( postcode, product_id, buffer_size, year, month, day, pixels_total, pixels_not_na, pixel_coverage, ndvi_max, ndvi_min, ndvi_average, ndvi_sd)
+  #               VALUES
+  #               ('%s',       '%s',       %f,        %f,   %f,    %f,  %f,           %f,            %f,             %f,       %f,      %f,           %f     )",
+  #               sample[['postcode']],
+  #               sample[['product_id']],
+  #               sample[['buffer_width']],
+  #               sample[['year']],
+  #               sample[['month']],
+  #               sample[['day']],
+  #               sample[['pixels_total']],
+  #               sample[['pixels_not_na']],
+  #               sample[['pixel_coverage']],
+  #               sample[['ndvi_max']],
+  #               sample[['ndvi_min']],
+  #               sample[['ndvi_average']],
+  #               sample[['ndvi_sd']]
+  #               )
+  print(sql)
+  
+  res <- dbSendQuery(mydb, sql)
+  dbClearResult(res)
+  
   
 }
