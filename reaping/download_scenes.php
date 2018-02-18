@@ -41,7 +41,7 @@
            curl_setopt($ch, CURLOPT_FILE, $fp);
            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30); // if we don't hear back in 30 seconds then fail
            curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, 'curl_progress'); // needed for progress to work
-           curl_setopt($ch, CURLOPT_TIMEOUT, 10 * 60); // if we can't get it in 10 minutes we give up - 
+           curl_setopt($ch, CURLOPT_TIMEOUT, 30 * 60); // if we can't get it in 30 minutes we give up - stop it hanging forever
            curl_setopt($ch, CURLOPT_NOPROGRESS, false);
            $worked = curl_exec ($ch);
            curl_close ($ch);

@@ -14,39 +14,9 @@ mydb = dbConnect(MySQL(), user=DB_USER, password=DB_PASSWORD, dbname=DB_DATABASE
 on.exit(dbDisconnect(mydb))
 
 # product_id <- 'LC08_L1TP_206021_20140418_20170423_01_T1';
-product_id <- 'LC08_L1TP_204021_20140911_20170419_01_T1';
+product_id <- 'LC08_L1TP_205021_20161025_20170318_01_T1';
+sample_product(product_id = product_id)
 
-ndvi_raster <- get_cloud_free_raster(product_id = product_id)
-
-plot(ndvi_raster)
-
-postcodes <- get_postcodes_in_extent(ndvi_raster)
-
-
-for(row in 1:nrow(postcodes)){
-  eastings <- postcodes[row, "GridReferenceEasting"]
-  northings <- postcodes[row, "GridReferenceNorthing"]
-  
-  coords <- cbind(eastings, northings)
-  # turn it into a spatial object of points
-  postcode_point <- SpatialPoints(coords)
-  proj4string(postcode_point) <- OSG_CRS
-  
-  x <- get_stats_for_sample(width_m = 250, postcode_point = postcode_point, ndvi_raster = ndvi_raster)
-
-  # expecting a large number to be no data
-  # but when we hit one that is we save it
-  if(x[['pixels_not_na']] != 0){
-    plot(x[['cropped']])
-    x[['postcode']] <- postcodes[row, "postcode"]
-    x[['product_id']] <- product_id
-    x[['year']] <- 1965 #product[[year]]
-    x[['month']] <- 2 #product[[month]]
-    x[['day']] <- 28 #product[[day]]
-    save_sample(sample = x)
-  }  
-  
-}
 
 
 # EH9 1HB	EH9	EH9 1	19730800000000		325514	672062	55.9359	-3.192476030000000	N	S12000036	S14000024	S17000012	S16000108	S13002928	S08000024	S08000010	5	S37000012	S00104738	S00014577	6229BM13B	S01008616	S01002002	S02001613	S02000374	32	85	32	87	31	58	6921	S30000008	S31000277	UKM2	UKM25	S19000855	173001	212	S20000682	173	S35000287	S09000002	0	29	29		S12000036			S11000003	S22000059	1	1	Y
@@ -55,8 +25,8 @@ for(row in 1:nrow(postcodes)){
 # DG16 5EA	DG16	DG16 5	19931200000000		332174	568369	55.0052	-3.060562620000000	N	S12000006	S14000014	S17000015	S16000097	S13002891	S08000017	S08000003	12	S37000006	S00097113	S00007455	5808AA07B	S01007681	S01000977	S02001444	S02000176	2	16	2	7	0	0	3484	S30000016	S31000511	UKM3	UKM32		0	276		0	S35000373	S09000004	0	8	8		S12000006				K01000010	5	6	Y
 
 # take some coordinates 
-coords <- cbind(340639, 672659)
-postcode_string <- 'EH33 2EQ'
+coords <- cbind(325514, 672062)
+postcode_string <- 'EH9 1HB'
 
 # turn it into a spatial object of points
 postcode_point <- SpatialPoints(coords)
