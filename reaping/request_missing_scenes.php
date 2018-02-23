@@ -28,7 +28,7 @@
     
     echo count($new_prods) . " new scenes found\n";
     
-    $limit = 10;
+    $limit = 50;
     foreach($new_prods as $prod_id){
         
         echo $prod_id . "\n";

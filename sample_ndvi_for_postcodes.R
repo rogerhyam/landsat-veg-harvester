@@ -4,6 +4,7 @@
 # https://geoscripting-wur.github.io/IntroToRaster/
 # https://landsat.usgs.gov/sites/default/files/documents/lasrc_product_guide.pdf
 # http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html
+# https://cran.r-project.org/web/packages/velox/README.html
 
 # load the config variables and functions
 source('config.R')
@@ -13,9 +14,6 @@ source('sampling_functions.R')
 mydb = dbConnect(MySQL(), user=DB_USER, password=DB_PASSWORD, dbname=DB_DATABASE, host=DB_HOST)
 on.exit(dbDisconnect(mydb))
 
-# product_id <- 'LC08_L1TP_206021_20140418_20170423_01_T1';
-product_id <- 'LC08_L1TP_205021_20161025_20170318_01_T1';
-sample_product(product_id = product_id)
 
 
 

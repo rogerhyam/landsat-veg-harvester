@@ -10,7 +10,7 @@ library(RMySQL)
 
 source('../secure_config.R')
 
-# root directory of where the data is stored (no slash at end)
+# root directory of where the data is stored (slash at end)
 DATA_DIR <- "/Volumes/RepoBack2TB/landsat-data/"
 #DATA_DIR <- '/Users/rogerhyam/landsat_data/'
 TAR_DIR <- paste( DATA_DIR, 'raw/tars/', sep="")
