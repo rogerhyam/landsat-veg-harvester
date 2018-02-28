@@ -7,7 +7,8 @@ sample_stack <- function(stack_name){
   rasterOptions(maxmemory=10e+09)
   
   stack_path <- paste(DATA_DIR, 'stacks/', stack_name, '.tif', sep='')
-  ndvi_stack <- stack(stack_path);
+  print(stack_path)
+  ndvi_stack <- stack(stack_path)
   ndvi_raster <- ndvi_stack[[1]]
   
   postcodes <- get_postcodes_in_extent(ndvi_raster)
@@ -154,6 +155,9 @@ create_stack_cache <- function(stack_name, month_paths){
   
   stack_cache_dir <- paste(DATA_DIR, 'cloud_free_cache', sep='')
   dir_paths <- paste(stack_cache_dir, month_paths, sep='/')
+
+  print(dir_paths)
+
   file_paths <- list.files(dir_paths,full.names=TRUE )
   
   print(file_paths)
@@ -204,10 +208,11 @@ update_cloud_free_cache <- function(){
                           join downloads as d on p.LANDSAT_PRODUCT_ID = d.product_id
                           where d.`status` like 'downloaded'")
   for(i in 1:nrow(downloads)) {
-    
-    print(paste(i, '-' ,p[['product_id']]))
-    
+        
     p <- downloads[i,]
+
+    print(paste(i, '-' ,p[['product_id']]))
+
     ndvi_cloudless_raster <- get_cloud_free_raster(p[['product_id']])
     
     file_dir <- paste(DATA_DIR, 'cloud_free_cache/', p[['year']], '/', p[['month']], sep='')
