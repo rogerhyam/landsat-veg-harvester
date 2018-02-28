@@ -194,7 +194,6 @@ create_stack_cache <- function(stack_name, month_paths){
 
 }
 
-
 # build a cache of cloud_free tifs by date
 update_cloud_free_cache <- function(){
   
@@ -358,4 +357,10 @@ save_sample <- function(sample){
   
   # return(r[['last_id']])
 
+}
+
+sample_greenspace <- function(shape_gs, buffer, buffer_size, postcode_string){
+  
+  
+  
 }
