@@ -10,6 +10,7 @@ get_ndvi_by_decile <- function(stack_name, buffer_size){
   join simd_decile as d on d.rank = simd.Overall_SIMD16_rank
   where stack_name like '%s'
   and length(pc.DateOfDeletion) < 1
+  and s.pixel_coverage > 0.5
   and buffer_size = %i", stack_name, buffer_size)
   
   res <- dbSendQuery(mydb, sql)
