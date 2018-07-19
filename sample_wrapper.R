@@ -6,3 +6,4 @@ mydb = dbConnect(MySQL(), user=DB_USER, password=DB_PASSWORD, dbname=DB_DATABASE
 on.exit(dbDisconnect(mydb))
 
 sample_stack(stack_name = 'winters_13_16')
+

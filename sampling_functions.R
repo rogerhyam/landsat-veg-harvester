@@ -359,6 +359,35 @@ save_sample <- function(sample){
 
 }
 
+save_greenness_of_greenspace= function(x){
+  
+  # ndvid_sd may be NA which we want as null
+  if(is.na(x[['ndvi_sd']])){
+    ndvi_sd <- 'NULL'
+  }else{
+    ndvi_sd <- toString(x[['ndvi_sd']])
+  }
+  
+  sql <- sprintf("INSERT INTO samples_greenness_greenspace
+                 ( polygon_id, gs_function, buffer_size, pixels_total, pixels_not_na, pixel_coverage, ndvi_max, ndvi_min, ndvi_average, ndvi_sd, created) 
+                 VALUE ('%s', '%s', '%s', '%s', '%s', %f, %f, %f, %f, %s, now() )",
+                 x[['polygon_id']],
+                 x[['gs_function']],
+                 x[['buffer_width']],
+                 x[['pixels_total']],
+                 x[['pixels_not_na']],
+                 x[['pixel_coverage']],
+                 x[['ndvi_max']],
+                 x[['ndvi_min']],
+                 x[['ndvi_average']],
+                 ndvi_sd
+  )
+  
+  res <- dbSendQuery(mydb, sql)
+  dbClearResult(res)
+  
+}
+
 sample_greenspace <- function(shape_gs, buffer, buffer_size, postcode_string){
   
   

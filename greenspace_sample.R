@@ -8,7 +8,7 @@ mydb = dbConnect(MySQL(), user=DB_USER, password=DB_PASSWORD, dbname=DB_DATABASE
 on.exit(dbDisconnect(mydb))
 
 # load the shape file
-shape_gs <- readOGR(dsn = "/Users/rogerhyam/Dropbox/RBGE/2018/Green_Deprivation/Green_Space_OS", layer = "Scotland")
+shape_gs <- readOGR(dsn = "/Users/rogerhyam/Dropbox/RBGE/2018/Green_Deprivation/Green_Space_OS_2018", layer = "scotland_greenspace_2018")
 
 # get the list of postcodes to scan
 e <- extent(shape_gs)
@@ -57,7 +57,7 @@ for(row in 1:nrow(postcodes)){
   # create biggest crop
   buffer_500_ogs <- gBuffer(postcode_point, width=500, byid=TRUE)
   suppressWarnings(i <- intersect(shape_gs, buffer_500_ogs))
-  data.frame("SN" = 1:2, "Age" = c(21,15), "Name" = c("John","Dora"))
+  #data.frame("SN" = 1:2, "Age" = c(21,15), "Name" = c("John","Dora"))
   if(!is.null(i)){
     out <- rbind(out,list(
       postcodes[row, "postcode"],
@@ -92,7 +92,6 @@ for(row in 1:nrow(postcodes)){
     ))
   }
   
-  
   buffer_100_ogs <- gBuffer(postcode_point, width=100, byid=TRUE)
   suppressWarnings(i <- intersect(shape_gs, buffer_100_ogs))
   if(!is.null(i)){
@@ -113,7 +112,7 @@ for(row in 1:nrow(postcodes)){
   
   # finally save it
   colnames(out) <- c("postcode", "buffer_size","greenspace_area","buffer_area")
-  dbWriteTable(mydb, "samples_greenspace", data.frame(out), append = TRUE)
+  dbWriteTable(mydb, "samples_greenspace_2018", data.frame(out), append = TRUE)
   
 }
 
