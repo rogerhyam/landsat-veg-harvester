@@ -6,7 +6,7 @@ source('config.R')
 mydb = dbConnect(MySQL(), user=DB_USER, password=DB_PASSWORD, dbname=DB_DATABASE, host=DB_HOST)
 on.exit(dbDisconnect(mydb))
 
-res <- dbSendQuery(mydb, "SELECT * FROM results_summers_500")
+res <- dbSendQuery(mydb, "SELECT * FROM results_winters_500 join pure_urban_1_data_zones on Data_Zone = DataZone2011Code")
 res_df <- dbFetch(res, n = -1)
 dbClearResult(res)
 
@@ -54,3 +54,17 @@ loess_fit <- loess(ndvi_avg ~ simd_rank, res_df)
 # JOIN
 # simd16_indicator_data AS i ON i.Data_Zone = s1.Data_Zone
 # order by i.DEPRESS desc
+
+# create table pure_urban_1_data_zones
+# 
+# select  distinct(DataZone2011Code)
+# 
+# from SmallUserPostcodes
+# 
+# where DataZone2011Code  not in (
+#   
+#   SELECT DataZone2011Code
+#   FROM greenery.SmallUserPostcodes as pc
+#   where pc.UrbanRural8Fold2013_2014Code > 1
+#   
+# )

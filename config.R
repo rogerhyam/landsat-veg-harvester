@@ -7,6 +7,8 @@ library(maptools)
 library(raster)
 library(rgeos)
 library(RMySQL)
+library(ppcor)
+
 require(rgdal)
 
 source('../secure_config.R')

@@ -393,3 +393,34 @@ sample_greenspace <- function(shape_gs, buffer, buffer_size, postcode_string){
   
   
 }
+
+save_natural_perception_sample <- function(sample){
+  
+  # ndvid_sd may be NA which we want as null
+  if(is.na(sample[['ndvi_sd']])){
+    ndvi_sd <- 'NULL'
+  }else{
+    ndvi_sd <- toString(sample[['ndvi_sd']])
+  }
+  
+  sql <- sprintf("INSERT INTO samples_natural_perception
+                ( sample_point_id, stack_name, buffer_size, pixels_total, pixels_not_na, pixel_coverage, ndvi_max, ndvi_min, ndvi_average, ndvi_sd, created) 
+                 VALUE ('%s', '%s', '%s', '%s', '%s', %f, %f, %f, %f, %s, now() )",
+                 sample[['sample_point_id']],
+                 sample[['stack_name']],
+                 sample[['buffer_width']],
+                 sample[['pixels_total']],
+                 sample[['pixels_not_na']],
+                 sample[['pixel_coverage']],
+                 sample[['ndvi_max']],
+                 sample[['ndvi_min']],
+                 sample[['ndvi_average']],
+                 ndvi_sd
+  )
+  
+  res <- dbSendQuery(mydb, sql)
+  dbClearResult(res)
+  
+}
+
+
