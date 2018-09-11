@@ -1,5 +1,4 @@
-# the 12% problem
-# is there a distinct difference in mortality / depression between top and bottom quintiles of NDVI.
+# Doing Tukey on the things
 
 source('config.R')
 
@@ -7,10 +6,9 @@ source('config.R')
 mydb = dbConnect(MySQL(), user=DB_USER, password=DB_PASSWORD, dbname=DB_DATABASE, host=DB_HOST)
 
 sql = "select *, concat_ws('-', 'G', quintile_p) as greenness
-from results_seasons_100 as ndvi
-where quintile_p = 4 or quintile_p = 5
+from results_summers_250 as ndvi
+where quintile_p is not null
 "
-
 res <- dbSendQuery(mydb, sql)
 res_df <- dbFetch(res, n = -1)
 dbClearResult(res)
@@ -28,16 +26,8 @@ new.c.vars <- cbind(simd_rank.c, mortality.c, depression.c)
 res_df <- cbind(res_df, new.c.vars)
 names(res_df)[14:16] = c("simd_rank.c", "mortality.c", "depression.c" )
 
-#model <- lm(simd_rank.c ~ greenness, data = res_df)
-#summary(model)$coef
+model <- aov( mortality.c ~  greenness + simd_rank.c, data = res_df)
+posthoc <- TukeyHSD(x=model, "greenness")
+plot(posthoc)
 
-#model <- lm(mortality.c ~ greenness + simd_rank.c, data = res_df)
-#summary(model)$coef
-
-model <- lm(depression.c ~ greenness + simd_rank.c, data = res_df)
-summary(model)$coef
-
-
-#summary(res_df)
-
-
+summary(res_df)
